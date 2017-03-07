@@ -10,13 +10,7 @@ public class Network { //the first class to get started
 	
 	public static void main(String[] args) {
 		//let's get MOOOOVING
-		Utils.log("Starting");
-		started();
+		Utils.getLogger().fine("Starting");
 		new MainMenu();
 	}
-	
-	private static void started() {
-		Utils.error(new Network(), 0, "Started");
-	}
-
 }

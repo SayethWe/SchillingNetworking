@@ -32,6 +32,7 @@ public class MainMenu extends JFrame implements ActionListener {
 	private static GridBagConstraints constraints; //the grid constraints variable
 	
 	public MainMenu() { //the constructor
+		Utils.getLogger().fine("Main Menu Opened");
 		setLayout(new GridBagLayout()); //use the gridBag layout
 		constraints = new GridBagConstraints(); //init our constraints
 		createLayout(); //set up our layout
@@ -62,31 +63,44 @@ public class MainMenu extends JFrame implements ActionListener {
 		JLabel title = new JLabel(Network.TITLE);
 		constraints.gridy = 0; //NO spaces down
 		title.setForeground(Color.WHITE); //set the text to white
+		constraints.gridwidth = 2; //two boxes wide
+		title.setHorizontalAlignment(SwingConstants.CENTER); //center the text
+		title.setVerticalAlignment(SwingConstants.CENTER); 
+		add(title, constraints);
 		
 		//load the client button
 		startClient = new JButton(START_CLIENT);
-		constraints.gridy = 1; //One spaces down
+		constraints.gridy = 1; //One space down
+		constraints.gridwidth = 1; //one space wide
+		startClient.setBackground(Color.BLACK); //black color
+		startClient.setOpaque(true); //color every pixel
+		startClient.setBorderPainted(false); //no border
+		startClient.setForeground(Color.WHITE); //white text
 		startClient.addActionListener(this); //give it something that listens to it. Like I wish my Ex had done for me. 
 		add(startClient, constraints); //add in the created button
 		
 		//load the 'or' label
 		JLabel orLabel = new JLabel("or");
 		orLabel.setForeground(Color.WHITE); //white text
-		constraints.gridy = 2; //Two space down
+		constraints.gridy = 2; //Two spaces down
 		orLabel.setHorizontalAlignment(SwingConstants.CENTER); //center the text
 		orLabel.setVerticalAlignment(SwingConstants.CENTER); 
-		add(orLabel, constraints); //toss it into the gui
+		//add(orLabel, constraints); //toss it into the gui
 		
 		//load the server button
 		startServer = new JButton(START_SERVER);
 		constraints.gridy = 3; //Three slots down
+		startServer.setBackground(Color.BLACK); //black color
+		startServer.setOpaque(true); //color every pixel
+		startServer.setBorderPainted(false); //no border
+		startServer.setForeground(Color.WHITE); //white text
 		startServer.addActionListener(this); //something to listen to it
 		add(startServer, constraints);
 		
 		//add the version label
 		JLabel versionNumber = new JLabel(Network.VERSION_NUMBER);
 		versionNumber.setForeground(Color.WHITE);
-		constraints.gridx = 2;
+		constraints.gridx = 1;
 		versionNumber.setHorizontalAlignment(SwingConstants.CENTER); //center the text
 		versionNumber.setVerticalAlignment(SwingConstants.CENTER); 
 		add(versionNumber, constraints);
