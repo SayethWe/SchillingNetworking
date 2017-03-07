@@ -14,12 +14,15 @@ public class Client implements Runnable {
 		this.myHandler = myHandler;
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public void run() {
 		try {
 			startUp();
 		} catch (Exception e) {
-			message(FAILURE_MESSAGE + e.toString());
+			send(FAILURE_MESSAGE + e.toString());
 		}
 	}
 	
