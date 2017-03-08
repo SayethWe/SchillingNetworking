@@ -1,5 +1,6 @@
 package org.schillingschool.networking.userInterface;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -11,7 +12,14 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.schillingschool.networking.handlers.ClientHandler;
+import org.schillingschool.networking.utils.Utils;
 
+/**
+ * The interface for our client
+ * receives user text and displays other text
+ * @author geekman9097
+ *
+ */
 public class ClientInterface extends JFrame implements ActionListener{
 
 	private static final String NEW_LINE = "\n";
@@ -26,6 +34,10 @@ public class ClientInterface extends JFrame implements ActionListener{
 	private JTextField typeBox;
 	GridBagConstraints constraints;
 	
+	/**
+	 * Create a new Client Interface
+	 * @param myHandler the handler we talk with.
+	 */
 	public ClientInterface(ClientHandler myHandler) {
 		this.myHandler = myHandler; //set the handler
 		setLayout(new GridBagLayout()); //use the gridBag layout
@@ -38,20 +50,29 @@ public class ClientInterface extends JFrame implements ActionListener{
 		setVisible(true);
 	}
 	
+	/**
+	 * set our layout up
+	 */
 	private void createLayout() {
+		//allow component resizing
 		constraints.weighty = 0.5;
 		constraints.weightx = 0.5;
+		constraints.fill = GridBagConstraints.BOTH;
+		
+		//set it to black
+		getContentPane().setBackground(Color.BLACK);
 		
 		displayText = new JTextArea(TEXT_HISTORY, DEFAULT_WIDTH);
 		JScrollPane scrollPane = new JScrollPane(displayText);
+		Utils.darkenField(displayText); //darken the field
 		displayText.setLineWrap(true);
 		displayText.setWrapStyleWord(true);
 		displayText.setEditable(false);
 		displayText.setText("");
-		constraints.fill = GridBagConstraints.BOTH;
 		add(scrollPane, constraints);
 
 		typeBox = new JTextField(PROMPT_TEXT);
+		Utils.darkenField(typeBox);
 		typeBox.setEditable(true);
 		typeBox.addActionListener(this);
 		constraints.gridy = 1;
@@ -59,16 +80,23 @@ public class ClientInterface extends JFrame implements ActionListener{
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		add(typeBox, constraints);
 	}
-
+	
+	/**
+	 * display a message to the user
+	 * @param message
+	 */
 	public void message(String message){
 		displayText.append(message + NEW_LINE);
 		displayText.setCaretPosition(displayText.getDocument().getLength());//jump the cursor to the end of the display to show it
 	}
 
+	/**
+	 * when something gets activated
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String message = typeBox.getText();
 		typeBox.setText("");
-		myHandler.send(message);
+		myHandler.serverward(message);
 	}
 }

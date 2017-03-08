@@ -17,12 +17,11 @@ import org.schillingschool.networking.handlers.ClientHandler;
 import org.schillingschool.networking.utils.Utils;
 
 /**
- * THe Main Menu Interface
+ * The Main Menu Interface
  * @author geekman9097
  */
 public class MainMenu extends JFrame implements ActionListener {
 	//basic constants for use
-	private static final String TITLE = "Schilling Comm Network";
 	private final String START_CLIENT = "Start a Client";
 	private final String START_SERVER = "Host a Server";
 
@@ -31,6 +30,9 @@ public class MainMenu extends JFrame implements ActionListener {
 	
 	private static GridBagConstraints constraints; //the grid constraints variable
 	
+	/**
+	 * Create a new main menu
+	 */
 	public MainMenu() { //the constructor
 		Utils.getLogger().fine("Main Menu Opened");
 		setLayout(new GridBagLayout()); //use the gridBag layout
@@ -38,7 +40,7 @@ public class MainMenu extends JFrame implements ActionListener {
 		createLayout(); //set up our layout
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //exit the program on window close
 		setResizable(true); //allow it to be resized
-		setTitle(TITLE);
+		setTitle(Network.TITLE);
 		setSize(getPreferredSize()); //set the default size
 		setVisible(true);
 	}
@@ -53,7 +55,7 @@ public class MainMenu extends JFrame implements ActionListener {
 		//allow components to resize
 		constraints.weightx = 0.5;
 		constraints.weighty = 0.5; 
-		constraints.fill = GridBagConstraints.BOTH;
+		constraints.fill = GridBagConstraints.NONE;
 		
 		//add padding
 		constraints.ipadx = 5;
@@ -72,28 +74,16 @@ public class MainMenu extends JFrame implements ActionListener {
 		startClient = new JButton(START_CLIENT);
 		constraints.gridy = 1; //One space down
 		constraints.gridwidth = 1; //one space wide
-		startClient.setBackground(Color.BLACK); //black color
-		startClient.setOpaque(true); //color every pixel
-		startClient.setBorderPainted(false); //no border
-		startClient.setForeground(Color.WHITE); //white text
+		constraints.anchor = GridBagConstraints.SOUTH;
+		Utils.darkenButton(startClient);
 		startClient.addActionListener(this); //give it something that listens to it. Like I wish my Ex had done for me. 
 		add(startClient, constraints); //add in the created button
 		
-		//load the 'or' label
-		JLabel orLabel = new JLabel("or");
-		orLabel.setForeground(Color.WHITE); //white text
-		constraints.gridy = 2; //Two spaces down
-		orLabel.setHorizontalAlignment(SwingConstants.CENTER); //center the text
-		orLabel.setVerticalAlignment(SwingConstants.CENTER); 
-		//add(orLabel, constraints); //toss it into the gui
-		
 		//load the server button
 		startServer = new JButton(START_SERVER);
-		constraints.gridy = 3; //Three slots down
-		startServer.setBackground(Color.BLACK); //black color
-		startServer.setOpaque(true); //color every pixel
-		startServer.setBorderPainted(false); //no border
-		startServer.setForeground(Color.WHITE); //white text
+		constraints.gridy = 2; //Three slots down
+		constraints.anchor = GridBagConstraints.NORTH;
+		Utils.darkenButton(startServer);
 		startServer.addActionListener(this); //something to listen to it
 		add(startServer, constraints);
 		
@@ -102,7 +92,8 @@ public class MainMenu extends JFrame implements ActionListener {
 		versionNumber.setForeground(Color.WHITE);
 		constraints.gridx = 1;
 		versionNumber.setHorizontalAlignment(SwingConstants.CENTER); //center the text
-		versionNumber.setVerticalAlignment(SwingConstants.CENTER); 
+		versionNumber.setVerticalAlignment(SwingConstants.CENTER);
+		constraints.anchor = GridBagConstraints.SOUTHEAST;
 		add(versionNumber, constraints);
 	}
 	
@@ -115,10 +106,16 @@ public class MainMenu extends JFrame implements ActionListener {
 		this.dispose();
 	}
 	
+	/**
+	 * run the server
+	 */
 	private void runServer() {
 		
 	}
 
+	/**
+	 * when something happens
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == startClient) runClient();
