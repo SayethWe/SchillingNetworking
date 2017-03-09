@@ -31,8 +31,7 @@ public class Server implements Runnable {
 	
 	private Thread t;
 	private ServerHandler myHandler;
-	private boolean run = true; //whether or not we should be moving 
-	private ArrayList<Socket> sockets = new ArrayList<>();
+	private boolean run = true; //whether or not we should be moving
 	private HashMap<String, ServerInThread> inThreads = new HashMap<>();//Store a user's name and associated thread
 	
 	/**
@@ -83,7 +82,7 @@ public class Server implements Runnable {
 				
 				// we've not crashed yet, so the client must be connected
 				guiward(CONNECT_MESSAGE);
-				
+						
 				inThreads.put(new Integer(generatedName).toString(), inThread = new ServerInThread(clientSock, this));
 				inThread.start();
 				updateUsers(inThreads.keySet());
@@ -122,29 +121,19 @@ public class Server implements Runnable {
 	}
 	
 	/**
-	 * Close a client socket
-	 * @param socket the socket to close
-	 * @throws IOException 
-	 */
-	public void closeSocket(Socket socket) throws IOException{
-		sockets.remove(socket);
-		socket.close();
-	}
-	
-	/**
 	 * Send a message to all connected clients
 	 * @param message the message to send
 	 */
 	public void clientward(String message) {
-		for (Socket thisSocket : sockets) {
+		inThreads.forEach((name, inThread) -> {
 			PrintWriter out;
 			try {
-				out = new PrintWriter(thisSocket.getOutputStream());
+				out = new PrintWriter(inThread.getClientSocket().getOutputStream());
 				out.println(message);
-				out.close(); //flush the buffer, then close it to save resources
+				out.close();
 			} catch (IOException e) {
 			}
-		}
+		});
 	}
 
 	/**
@@ -162,10 +151,7 @@ public class Server implements Runnable {
 	 */
 	public void message(String message, ServerInThread messenger) {
 		inThreads.forEach((name, inThread) -> { //lambda. for each...
-			if (inThread.equals(messenger)) { //...ServerInThread, see if it sent this If it did-
-				clientward(name + ": " + message); //-print the ...name + the message
-				guiward(name + ": " + message);
-			}
+		 
 		});
 	}
 	

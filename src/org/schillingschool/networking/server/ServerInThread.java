@@ -36,7 +36,7 @@ public class ServerInThread implements Runnable {
 				
 				inString = in.readLine();
 				if(inString.equalsIgnoreCase(Network.DISCONNECT_COMMAND)) {
-					myServer.closeSocket(clientSock);
+					clientSock.close();
 					end();
 				}
 				message(inString);
