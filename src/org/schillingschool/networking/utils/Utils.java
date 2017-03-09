@@ -1,6 +1,10 @@
 package org.schillingschool.networking.utils;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
@@ -46,5 +50,15 @@ public class Utils {
 		component.setBackground(Color.BLACK); //black color
 		component.setOpaque(true); //color every pixel
 		component.setForeground(Color.WHITE); //white text
+	}
+	
+	/**
+	 * sort a set of strings alphabetically
+	 * @param in the set to sort
+	 */
+	public static ArrayList<String> sort(Set<String> inSet) {
+		ArrayList<String> list = new ArrayList<>(inSet);
+		Collections.sort(list);
+		return list;
 	}
 }

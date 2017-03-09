@@ -17,7 +17,6 @@ public class ClientInThread implements Runnable {
 	private final static String DISCONNECT_MESSAGE = "Server Disconnected, Terminating Processes...";
 	
 	private Thread t;
-	private String name;
 	private Socket clientSock;
 	private Client client;
 	private boolean run = true; //if we're still supposed to be running
@@ -28,8 +27,7 @@ public class ClientInThread implements Runnable {
 	 * @param clientSock the socket on which the server resides
 	 * @param client the client we pass information on to
 	 */
-	public ClientInThread(String name, Socket clientSock, Client client) {
-		this.name = name;
+	public ClientInThread(Socket clientSock, Client client) {
 		this.clientSock = clientSock;
 		this.client = client;
 	}
@@ -76,7 +74,7 @@ public class ClientInThread implements Runnable {
 	 */
 	public void start() {
 		if (t == null) {
-			t = new Thread(this, name);
+			t = new Thread(this);
 			t.start();
 		}
 	}

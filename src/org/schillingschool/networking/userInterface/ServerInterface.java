@@ -5,43 +5,44 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import org.schillingschool.networking.handlers.ClientHandler;
+import org.schillingschool.networking.handlers.ServerHandler;
 import org.schillingschool.networking.utils.Utils;
 
 /**
- * The interface for our client
- * receives user text and displays other text
+ * the interface for the server to use. Shows debug messages and will allow command entry
  * @author geekman9097
  *
  */
-public class ClientInterface extends JFrame implements ActionListener{
-
+public class ServerInterface extends JFrame implements ActionListener {
 	private static final String NEW_LINE = "\n";
 	private static final String TITLE = "SCN Client";
-	final private static int TEXT_HISTORY = 10;
+	final private static int TEXT_HISTORY = 11;
 	final private static int DEFAULT_WIDTH = 20;
-	final private static String PROMPT_TEXT = "Type a message Here";
+	final private static String PROMPT_TEXT = "Commands";
+	private static final int USER_WIDTH = 10;
 	
-	
-	private ClientHandler myHandler;
+	private ServerHandler myHandler;
+	private GridBagConstraints constraints;
 	private JTextArea displayText;
+	private JTextArea userList;
 	private JTextField typeBox;
-	GridBagConstraints constraints;
-	
+
 	/**
-	 * Create a new Client Interface
-	 * @param myHandler the handler we talk with.
+	 * Create a Server gui with the designated handler
+	 * @param myHandler the handler this will receive messages from and send commands to
 	 */
-	public ClientInterface(ClientHandler myHandler) {
-		this.myHandler = myHandler; //set the handler
-		setLayout(new GridBagLayout()); //use the gridBag layout
-		constraints = new GridBagConstraints(); //init our constraints
+	public ServerInterface(ServerHandler myHandler) {
+		this.myHandler = myHandler;
+		setLayout(new GridBagLayout());
+		constraints = new GridBagConstraints();
 		createLayout(); //set up our layout
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //exit the program on window close
 		setResizable(true); //allow it to be resized
@@ -51,17 +52,18 @@ public class ClientInterface extends JFrame implements ActionListener{
 	}
 	
 	/**
-	 * set our client layout up
+	 * create our server layout
 	 */
-	private void createLayout() {
+	public void createLayout() {
 		//allow component resizing
 		constraints.weighty = 0.5;
 		constraints.weightx = 0.5;
 		constraints.fill = GridBagConstraints.BOTH;
-		
-		//set it to black
+				
+		//I see a white pane and I want to paint it black
 		getContentPane().setBackground(Color.BLACK);
 		
+		//set up our out display
 		displayText = new JTextArea(TEXT_HISTORY, DEFAULT_WIDTH);
 		JScrollPane scrollPane = new JScrollPane(displayText);
 		Utils.darkenField(displayText); //darken the field
@@ -70,7 +72,18 @@ public class ClientInterface extends JFrame implements ActionListener{
 		displayText.setEditable(false);
 		displayText.setText("");
 		add(scrollPane, constraints);
-
+		
+		//a display for the userlist
+		userList = new JTextArea(TEXT_HISTORY, USER_WIDTH);
+		JScrollPane userPane = new JScrollPane(userList);
+		Utils.darkenField(userList); //darken the field
+		userList.setLineWrap(true);
+		userList.setWrapStyleWord(true);
+		userList.setEditable(false);
+		userList.setText("");
+		add(userPane, constraints);
+		
+		//the command field
 		typeBox = new JTextField(PROMPT_TEXT);
 		Utils.darkenField(typeBox);
 		typeBox.setEditable(true);
@@ -82,21 +95,34 @@ public class ClientInterface extends JFrame implements ActionListener{
 	}
 	
 	/**
-	 * display a message to the user
-	 * @param message
+	 * display a message on the out field
+	 * @param message THe message to display
 	 */
 	public void message(String message){
-		displayText.append(message + NEW_LINE);
+		displayText.append(message + NEW_LINE); //add text
 		displayText.setCaretPosition(displayText.getDocument().getLength());//jump the cursor to the end of the display to show it
 	}
-
+	
 	/**
-	 * when something gets activated
+	 * send message towards the server
+	 * @param message the message to send
 	 */
+	public void command(String message) {
+	}
+	
+	/**
+	 * update the list of users
+	 */
+	public void updateUsers(Set<String> handles) {
+		userList.setText(""); //clear the userList
+		ArrayList<String> names = Utils.sort(handles);
+		names.forEach((name) -> userList.append(name + NEW_LINE));
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String message = typeBox.getText();
 		typeBox.setText("");
-		myHandler.serverward(message);
+		command(message);
 	}
 }

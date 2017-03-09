@@ -16,7 +16,12 @@ public class Network { //the first class to get started
 	public final static String TITLE = "Schilling Communications Network"; //the title of our project
 	public final static int DEFAULT_PORT = 3333; //the default port for receiving connections
 	public final static String DISCONNECT_COMMAND = "/Server Disconnect";
+	public final static int HANDSHAKE_LENGTH = 256; //how long our ping and pong byte arrays should be
 	
+	/**
+	 * Start our program
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		//Let's get MOOOOVING
 		Utils.getLogger().fine("Starting");

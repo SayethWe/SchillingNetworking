@@ -9,16 +9,15 @@ import org.schillingschool.networking.userInterface.ClientInterface;
  * @author geekman9097
  *
  */
-public class ClientHandler implements Runnable{
+public class ClientHandler{
 
 	private Client myClient;
 	private ClientInterface myGui;
 	
 	/**
-	 * run us off a new client.
+	 * run us off a new client side.
 	 */
-	@Override
-	public void run() {
+	public ClientHandler() {
 		myGui = new ClientInterface(this);
 		myClient = new Client(this);
 		Thread execute = new Thread(myClient);

@@ -14,7 +14,6 @@ import org.schillingschool.networking.utils.Utils;
  */
 public class ClientOutThread implements Runnable {
 	private Thread t;
-	private String name;
 	private Socket clientSock;
 	private boolean run = true; //if we're still supposed to be running
 	private boolean dataAvailable = false; //if the handler has sent us data recently
@@ -27,9 +26,8 @@ public class ClientOutThread implements Runnable {
 	 * @param clientSock The Socket to Connect to
 	 * @param username The User's name
 	 */
-	public ClientOutThread(String name, Socket clientSock, String username) {
+	public ClientOutThread(Socket clientSock, String username) {
 		this.clientSock = clientSock;
-		this.name = name;
 	}
 	
 	/**
@@ -44,7 +42,7 @@ public class ClientOutThread implements Runnable {
 	 */
 	public void start() {
 		if (t == null) {
-			t = new Thread(this, name);
+			t = new Thread(this);
 			t.start();
 		}
 	}

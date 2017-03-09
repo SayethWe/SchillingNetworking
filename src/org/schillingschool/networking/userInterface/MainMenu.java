@@ -14,6 +14,7 @@ import javax.swing.SwingConstants;
 
 import org.schillingschool.networking.Network;
 import org.schillingschool.networking.handlers.ClientHandler;
+import org.schillingschool.networking.handlers.ServerHandler;
 import org.schillingschool.networking.utils.Utils;
 
 /**
@@ -101,8 +102,7 @@ public class MainMenu extends JFrame implements ActionListener {
 	 * run the client
 	 */
 	private void runClient() {
-		Thread execute = new Thread(new ClientHandler());
-		execute.start();
+		new ClientHandler();
 		this.dispose();
 	}
 	
@@ -110,7 +110,8 @@ public class MainMenu extends JFrame implements ActionListener {
 	 * run the server
 	 */
 	private void runServer() {
-		
+		new ServerHandler();
+		this.dispose();
 	}
 
 	/**
