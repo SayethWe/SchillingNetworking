@@ -7,7 +7,7 @@ import org.schillingschool.networking.userInterface.ClientInterface;
  * The handler for the client side. Handles messages between gui and Client
  * Only object with knowledge of both the client branch and the gui branch
  * @author geekman9097
- *
+ * @version 9/3/17
  */
 public class ClientHandler{
 
@@ -38,6 +38,11 @@ public class ClientHandler{
 	 */
 	public void serverward(String message) {
 		myClient.serverward(message);
+	}
+
+	public void end() {
+		myClient.end();
+		myGui.close();
 	}
 
 }

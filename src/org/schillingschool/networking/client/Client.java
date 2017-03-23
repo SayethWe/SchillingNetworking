@@ -9,12 +9,13 @@ import java.net.UnknownHostException;
 
 import org.schillingschool.networking.Network;
 import org.schillingschool.networking.handlers.ClientHandler;
-import org.schillingschool.networking.utils.Utils;
+import org.schillingschool.utils.Utils;
 
 /**
  * A client that sets itself up, then functions as an I/O for messages
  * @author geekman9097
  * @author DMWCincy
+ * @version 9/3/17
  */
 public class Client implements Runnable {
 
@@ -58,7 +59,6 @@ public class Client implements Runnable {
 	 */
 	private void startUp() throws IOException, UnknownHostException, InterruptedException {
 		InetAddress hostAddr;
-		String username = "";
 		String hostPort = null;
 
 		boolean connection = true;
@@ -66,14 +66,12 @@ public class Client implements Runnable {
 		byte[] Ping = new byte[Network.HANDSHAKE_LENGTH];
 
 		//Get server address from client
-		getInfo("Enter Host Adress");
+		getInfo("Enter Host Address");
 		hostAddr = InetAddress.getByName(userStr);
 		Utils.getLogger().info("Host received, attempting connection");
 
 		//Try to connect 3 times before giving up
 		for(int i = 0; i < TRIES; i++){
-			userward("Try" + (i + 1));
-
 			connection = true; //If a connection has been established, exit loop
 
 			DatagramSocket dataSock = new DatagramSocket(); //Create socket on first available port
@@ -104,10 +102,10 @@ public class Client implements Runnable {
 
 		Socket clientSock = new Socket(hostAddr, Integer.parseInt(hostPort)); //Establish connection with server
 
-		userward("Connected. You can now send messages, type '/Server disconnect' to disconnect");
+//		userward("Connected. You can now send messages, type '" + Network.DISCONNECT_COMMAND +"' to disconnect");
 		//Start communication Thread
 
-		out = new ClientOutThread(clientSock, username);
+		out = new ClientOutThread(clientSock);
 		out.start(); //start out thread
 		in = new ClientInThread(clientSock, this);
 		in.start(); //start in thread
@@ -119,7 +117,7 @@ public class Client implements Runnable {
 	 * send a message to the handler
 	 * @param message the message to send
 	 */
-	public void userward(String message) {
+	void userward(String message) {
 		myHandler.userward(message);
 	}
 	
@@ -131,7 +129,6 @@ public class Client implements Runnable {
 		while(!dataAvailable) { //as long as there's no data...
 			Thread.sleep(NAP_TIME); //take a little nap
 		}
-		Utils.getLogger().info("Data is ready");
 		dataAvailable = false;
 	}
 	
@@ -151,7 +148,7 @@ public class Client implements Runnable {
 	 */
 	public synchronized void end() {
 		out.end();
-//		in.end();
+		in.end();
 	}
 	
 	/**
@@ -159,9 +156,11 @@ public class Client implements Runnable {
 	 * @param message the message to send
 	 */
 	public void serverward(String message) {
-		if(started) out.serverward(message);
-		userStr = message;
-		dataAvailable = true;
-		Utils.getLogger().info("message received, jefe");
+		if(started) {
+			out.serverward(message);
+		} else {
+			userStr = message;
+			dataAvailable = true;
+		}
 	}
 }

@@ -15,11 +15,12 @@ import javax.swing.SwingConstants;
 import org.schillingschool.networking.Network;
 import org.schillingschool.networking.handlers.ClientHandler;
 import org.schillingschool.networking.handlers.ServerHandler;
-import org.schillingschool.networking.utils.Utils;
+import org.schillingschool.utils.Utils;
 
 /**
  * The Main Menu Interface
  * @author geekman9097
+ * @version 9/3/17
  */
 public class MainMenu extends JFrame implements ActionListener {
 	//basic constants for use
@@ -91,7 +92,7 @@ public class MainMenu extends JFrame implements ActionListener {
 		//add the version label
 		JLabel versionNumber = new JLabel(Network.VERSION_NUMBER);
 		versionNumber.setForeground(Color.WHITE);
-		constraints.gridx = 1;
+		constraints.gridy = 3;
 		versionNumber.setHorizontalAlignment(SwingConstants.CENTER); //center the text
 		versionNumber.setVerticalAlignment(SwingConstants.CENTER);
 		constraints.anchor = GridBagConstraints.SOUTHEAST;
@@ -103,7 +104,7 @@ public class MainMenu extends JFrame implements ActionListener {
 	 */
 	private void runClient() {
 		new ClientHandler();
-		this.dispose();
+//		this.dispose();
 	}
 	
 	/**
@@ -111,7 +112,7 @@ public class MainMenu extends JFrame implements ActionListener {
 	 */
 	private void runServer() {
 		new ServerHandler();
-		this.dispose();
+//		this.dispose();
 	}
 
 	/**

@@ -5,14 +5,14 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import org.schillingschool.networking.Network;
-import org.schillingschool.networking.utils.Utils;
+import org.schillingschool.utils.Utils;
 
 /**
  * The Out Thread for the client. Interfaces with the server to send messages
  * @author geekman9097
- *
+ * @version 9/3/17
  */
-public class ClientOutThread implements Runnable {
+class ClientOutThread implements Runnable {
 	private Thread t;
 	private Socket clientSock;
 	private boolean run = true; //if we're still supposed to be running
@@ -26,7 +26,7 @@ public class ClientOutThread implements Runnable {
 	 * @param clientSock The Socket to Connect to
 	 * @param username The User's name
 	 */
-	public ClientOutThread(Socket clientSock, String username) {
+	ClientOutThread(Socket clientSock) {
 		this.clientSock = clientSock;
 	}
 	

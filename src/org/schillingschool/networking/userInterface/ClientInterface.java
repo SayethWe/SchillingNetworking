@@ -5,6 +5,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -12,17 +14,15 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.schillingschool.networking.handlers.ClientHandler;
-import org.schillingschool.networking.utils.Utils;
+import org.schillingschool.utils.Utils;
 
 /**
  * The interface for our client
  * receives user text and displays other text
  * @author geekman9097
- *
+ * @version 9/3/17
  */
-public class ClientInterface extends JFrame implements ActionListener{
-
-	private static final String NEW_LINE = "\n";
+public class ClientInterface extends JFrame implements ActionListener, WindowListener{
 	private static final String TITLE = "SCN Client";
 	final private static int TEXT_HISTORY = 10;
 	final private static int DEFAULT_WIDTH = 20;
@@ -32,7 +32,7 @@ public class ClientInterface extends JFrame implements ActionListener{
 	private ClientHandler myHandler;
 	private JTextArea displayText;
 	private JTextField typeBox;
-	GridBagConstraints constraints;
+	private GridBagConstraints constraints;
 	
 	/**
 	 * Create a new Client Interface
@@ -58,6 +58,10 @@ public class ClientInterface extends JFrame implements ActionListener{
 		constraints.weighty = 0.5;
 		constraints.weightx = 0.5;
 		constraints.fill = GridBagConstraints.BOTH;
+
+		//add padding
+		constraints.ipadx = 5;
+		constraints.ipady = 5;
 		
 		//set it to black
 		getContentPane().setBackground(Color.BLACK);
@@ -86,7 +90,7 @@ public class ClientInterface extends JFrame implements ActionListener{
 	 * @param message
 	 */
 	public void message(String message){
-		displayText.append(message + NEW_LINE);
+		displayText.append(message + Utils.NEWLINE);
 		displayText.setCaretPosition(displayText.getDocument().getLength());//jump the cursor to the end of the display to show it
 	}
 
@@ -98,5 +102,22 @@ public class ClientInterface extends JFrame implements ActionListener{
 		String message = typeBox.getText();
 		typeBox.setText("");
 		myHandler.serverward(message);
+	}
+	
+	@Override public void windowOpened(WindowEvent e) {}
+	@Override public void windowClosing(WindowEvent e) {}
+	@Override public void windowClosed(WindowEvent e) {
+		myHandler.end();
+	}
+	@Override public void windowIconified(WindowEvent e) {}
+	@Override public void windowDeiconified(WindowEvent e) {}
+	@Override public void windowActivated(WindowEvent e) {}
+	@Override public void windowDeactivated(WindowEvent e) {}
+
+	/**
+	 * close the gui safely
+	 */
+	public void close() {
+		this.dispose();
 	}
 }

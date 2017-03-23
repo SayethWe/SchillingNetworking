@@ -10,7 +10,7 @@ import org.schillingschool.networking.userInterface.ServerInterface;
  * May also handle the game in the future
  * Only object with knowledge of both (or all three, maybe)
  * @author geekman9097
- *
+ * @version 9/3/17
  */
 public class ServerHandler {
 
@@ -38,18 +38,18 @@ private ServerInterface myGui;
 	}
 	
 	/**
-	 * send a command to the server
-	 * @param message the message to send
-	 */
-	public void command(String message) {
-		myServer.command(message);
-	}
-	
-	/**
 	 * send a message to the gui to update the user list
 	 * @param handles the set to eventually be shown
 	 */
 	public void updateUsers(Set<String> handles) {
 		myGui.updateUsers(handles);
+	}
+	
+	/**
+	 * end the server associated with this and close the gui
+	 */
+	public void end() {
+		myServer.end();
+		myGui.close();
 	}
 }

@@ -6,33 +6,30 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.schillingschool.networking.Network;
 import org.schillingschool.networking.handlers.ServerHandler;
-
-//TODO have the server store usernames and pre-rend them
-//TODO therefore, server must get username
+import org.schillingschool.utils.Utils;
 
 /**
  * The server class. Handles receiving connections and acts as a handler for incoming/outgoing messages
  * @author geekman9097
  * @author DMWCincy
+ * @version 9/3/17
  */
 public class Server implements Runnable {
 
 	private final static String REQUEST_MESSAGE = "Client request detected.";
-	private final static String NEWLINE = "\n";// a constant to make printing new lines easier
-	private final static String CONNECT_MESSAGE = "Client Connected." + NEWLINE + "==--=^=--==";
+	private final static String CONNECT_MESSAGE = "Client Connected." + Utils.NEWLINE + Utils.FANCY_LINE;
 	private final static int SOCKET_TIMEOUT = 5000; //the number of mills before we say a socket has timed out
 	
 	private Thread t;
-	private ServerHandler myHandler;
+	private final ServerHandler myHandler;
 	private boolean run = true; //whether or not we should be moving
-	private HashMap<String, ServerInThread> inThreads = new HashMap<>();//Store a user's name and associated thread
+	private ArrayList<ServerListener> listeners = new ArrayList<>();//Store a user's name and associated thread
 	
 	/**
 	 * Start an object to receive connections
@@ -47,14 +44,11 @@ public class Server implements Runnable {
 	 */
 	@Override
 	public void run() {
-		int generatedName = 0;
 		while(run) { //loop until we're told not to
 			InetAddress conAddr; //address of person attempting to connect
 			int conPort; //port of person attempting to connect
 			byte[] Pong = new byte[Network.HANDSHAKE_LENGTH]; //byte array for packages
 			ServerSocket servSock;
-			Socket clientSock;
-			ServerInThread inThread;
 			try {
 				DatagramSocket conSock = new DatagramSocket(Network.DEFAULT_PORT); //Create a socket to wait for connection requests
 				DatagramPacket conPack = new DatagramPacket(Pong, Pong.length); //Create package to wait for connection requests
@@ -65,7 +59,7 @@ public class Server implements Runnable {
 				conAddr = conPack.getAddress(); //Get address of requestee
 				conPort = conPack.getPort(); //Get port of requestee
 				
-				guiward(REQUEST_MESSAGE +  NEWLINE + "Client addr: " + conAddr + NEWLINE + "Client port: " + conPort);
+				guiward(REQUEST_MESSAGE +  Utils.NEWLINE + "Client addr: " + conAddr + Utils.NEWLINE + "Client port: " + conPort);
 				
 				servSock = new ServerSocket(0);
 				
@@ -78,16 +72,14 @@ public class Server implements Runnable {
 				conSock.close(); //close the default socket to prevent resource leaking
 				
 				servSock.setSoTimeout(SOCKET_TIMEOUT);
-				clientSock = servSock.accept();
 				
 				// we've not crashed yet, so the client must be connected
 				guiward(CONNECT_MESSAGE);
-						
-				inThreads.put(new Integer(generatedName).toString(), inThread = new ServerInThread(clientSock, this));
-				inThread.start();
-				updateUsers(inThreads.keySet());
-				generatedName++;
 				
+				ServerListener client = new ServerListener(servSock.accept(),this);
+				listeners.add(client);
+				client.start();
+				updateUsers();
 			} catch (IOException e) {
 			}
 		}
@@ -109,14 +101,14 @@ public class Server implements Runnable {
 	 */
 	public synchronized void end() {
 		run = false;
-		inThreads.forEach((name, inThread) -> inThread.end()); //Lambda. for each inThread, end it;);
+		listeners.forEach((inThread) -> inThread.end()); //Lambda. for each inThread, end it;);
 	}
 	
 	/**
 	 * pass a message to the handler
 	 * @param message the message to send
 	 */
-	public void guiward(String message) {
+	private void guiward(String message) {
 		myHandler.guiward(message);
 	}
 	
@@ -124,8 +116,8 @@ public class Server implements Runnable {
 	 * Send a message to all connected clients
 	 * @param message the message to send
 	 */
-	public void clientward(String message) {
-		inThreads.forEach((name, inThread) -> {
+	private void clientward(String message) {
+		listeners.forEach((inThread) -> {
 			PrintWriter out;
 			try {
 				out = new PrintWriter(inThread.getClientSocket().getOutputStream());
@@ -135,24 +127,25 @@ public class Server implements Runnable {
 			}
 		});
 	}
-
-	/**
-	 * process a command
-	 * @param message
-	 */
-	public void command(String message) {
-		
-	}
 	
 	/**
 	 * handles a message from a client thread
 	 * @param message the message to process
 	 * @param messenger the thread that sent the message
 	 */
-	public void message(String message, ServerInThread messenger) {
-		inThreads.forEach((name, inThread) -> { //lambda. for each...
-		 
-		});
+	void message(String message) {
+		clientward(message);
+	}
+	
+	/**
+	 * Send a message to a specific client
+	 * @param message the message to send 
+	 * @param recipient who to send the message to
+	 * @throws IOException 
+	 */
+	void directMessage(ServerListener recipient, String message) throws IOException {
+		PrintWriter out = new PrintWriter(recipient.getClientSocket().getOutputStream());
+		out.println(message);
 	}
 	
 	/**
@@ -162,8 +155,22 @@ public class Server implements Runnable {
 	 * 	A client disconnects
 	 * @param handles the set to eventually be shown
 	 */
-	public void updateUsers(Set<String> handles) {
+	private void updateUsers() {
+		Set<String> handles = new HashSet<>();
+		listeners.forEach((inThread) -> handles.add(inThread.getUsername()));
 		myHandler.updateUsers(handles);
 	}
 	
+	/**
+	 * check if a name is already taken
+	 * @param username the name to check against
+	 * @return whether or not the name is taken
+	 */
+	boolean nameAvailable(String username) {
+		boolean available = true;
+		for (ServerListener inThread : listeners) {
+			if(username.equals(inThread.getUsername())) available = false;
+		}
+		return available;
+	}
 }

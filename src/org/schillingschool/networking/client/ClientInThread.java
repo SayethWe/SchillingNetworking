@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-import org.schillingschool.networking.Network;
+import org.schillingschool.utils.Utils;
 
 /**
  * The In Thread for the Client. Interfaces with the Server to receive messages.
  * @author geekman9097
- *
+ * @version 9/3/17
  */
-public class ClientInThread implements Runnable {
+class ClientInThread implements Runnable {
 
 	private final static String DISCONNECT_MESSAGE = "Server Disconnected, Terminating Processes...";
 	
@@ -27,7 +27,7 @@ public class ClientInThread implements Runnable {
 	 * @param clientSock the socket on which the server resides
 	 * @param client the client we pass information on to
 	 */
-	public ClientInThread(Socket clientSock, Client client) {
+	ClientInThread(Socket clientSock, Client client) {
 		this.clientSock = clientSock;
 		this.client = client;
 	}
@@ -37,6 +37,7 @@ public class ClientInThread implements Runnable {
 	 */
 	@Override
 	public void run() {
+		userward("IS WORK??");
 		BufferedReader in;
 		String inStr;
 		try {
@@ -44,13 +45,10 @@ public class ClientInThread implements Runnable {
 			while (run) {
 				inStr = in.readLine();
 				userward(inStr);
-				if(inStr.equalsIgnoreCase(Network.DISCONNECT_COMMAND)) {
-					userward(DISCONNECT_MESSAGE);
-					client.end();
-				}
 			}
 			in.close();
 		} catch (IOException e) {
+			Utils.getLogger().info(e.toString());
 		}
 	}
 	
